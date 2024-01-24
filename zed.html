@@ -21,6 +21,7 @@
     <table id="accountTable" class="table mt-3">
         <thead>
             <tr>
+                <th></th>
                 <th>Tài khoản</th>
                 <th>Mật khẩu</th>
                 <th></th>
@@ -56,13 +57,18 @@
 
             // Populate the table with accounts
             let count = 0;
-            accounts.forEach(account => {
+            accounts.forEach((account, index) => {
                 const [username, password] = account.split('|');
                 const row = accountBody.insertRow();
-                const cell1 = row.insertCell(0);
-                const cell2 = row.insertCell(1);
-                const cell3 = row.insertCell(2);
-                const cell4 = row.insertCell(3);
+                
+                // Add line number column
+                const cell0 = row.insertCell(0);
+                cell0.textContent = index + 1;
+
+                const cell1 = row.insertCell(1);
+                const cell2 = row.insertCell(2);
+                const cell3 = row.insertCell(3);
+                const cell4 = row.insertCell(4);
                 cell1.textContent = username;
                 cell2.textContent = password;
 
@@ -84,15 +90,16 @@
                 count++;
                 if (count % 10 === 0) {
                     const emptyRow = accountBody.insertRow();
-                    const emptyCell1 = emptyRow.insertCell(0);
-                    const emptyCell2 = emptyRow.insertCell(1);
-                    const emptyCell3 = emptyRow.insertCell(2);
-                    const emptyCell4 = emptyRow.insertCell(3);
+                    const emptyCell0 = emptyRow.insertCell(0);
+                    const emptyCell1 = emptyRow.insertCell(1);
+                    const emptyCell2 = emptyRow.insertCell(2);
+                    const emptyCell3 = emptyRow.insertCell(3);
+                    const emptyCell4 = emptyRow.insertCell(4);
+                    emptyCell0.textContent = '--------';
                     emptyCell1.textContent = '--------------------------------------';
                     emptyCell2.textContent = '--------------------------------------';
                     emptyCell3.textContent = '--------';
                     emptyCell4.textContent = '--------';
-                    
                 }
             });
 
@@ -109,7 +116,9 @@
             // Mark the row as copied using the custom 'copied' class
             row.classList.add('copied');
             statusCell.textContent = 'Đã chọn';
-
+            row.style.backgroundColor = '#c8e6c9'; // Green background
+           
+            statusCell.classList = "text-danger";
             if (!isCopyOnly) {
                 // Open a new tab and navigate to Gmail login page
                 window.open('https://accounts.google.com/AddSession?hl=es-419&continue=https://mail.google.com/mail/&service=mail&ec=GAlAFw&authuser=0', '_blank');
