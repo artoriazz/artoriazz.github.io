@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload and Parse</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        .copied {
+            background-color: #d4edda;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Tách mail</h2>
+        <div class="file-field input-field">
+            <div class="btn">
+                <span>File</span>
+                <input type="file" id="fileInput">
+            </div>
+            <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+            </div>
+        </div>
+        <table id="dataTable" class="highlight">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.getElementById('fileInput').addEventListener('change', handleFileSelect, false);
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const contents = e.target.result;
+                    parseData(contents);
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function parseData(data) {
+            const rows = data.split('\n');
+            const tableBody = document.querySelector('#dataTable tbody');
+            tableBody.innerHTML = '';
+            rows.forEach(row => {
+                const columns = row.split('|');
+                if (columns.length >= 2) {
+                    const email = columns[0];
+                    const password = columns[1];
+                    const newRow = document.createElement('tr');
+                    const emailCell = document.createElement('td');
+                    emailCell.textContent = email;
+                    const passwordCell = document.createElement('td');
+                    passwordCell.textContent = password;
+                    const actionCell = document.createElement('td');
+                    const copyButton = document.createElement('button');
+                    copyButton.classList.add('btn', 'waves-effect', 'waves-light');
+                    copyButton.innerHTML = '<i class="material-icons">content_copy</i>';
+                    copyButton.addEventListener('click', () => copyRow(newRow, email, password));
+                    actionCell.appendChild(copyButton);
+                    newRow.appendChild(emailCell);
+                    newRow.appendChild(passwordCell);
+                    newRow.appendChild(actionCell);
+                    tableBody.appendChild(newRow);
+                }
+            });
+        }
+
+        function copyRow(row, email, password) {
+            const text = `${email}|${password}`;
+            navigator.clipboard.writeText(text).then(() => {
+                row.classList.add('copied');
+                M.toast({html: 'Row copied to clipboard!'});
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
